@@ -20,6 +20,7 @@ class MainWindow(object):
         self.__line_width = 5
         self.__figure = Square(self.__DEFAULT_COLOR, self.__DEFAULT_COLOR, 5, Point2D(20, 20), Point2D(100, 100))
         self.root = Tk()
+        self.root.title('Paint')
         self.__MENU_FONT = tkfont.Font(family="fangsong ti", size=16)
         self.__create_menu()
         self.c = Canvas(self.root, bg='white', width=800, height=500)
