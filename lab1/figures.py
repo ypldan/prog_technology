@@ -1,5 +1,10 @@
 from abc import ABC, abstractmethod
 from tkinter import Canvas
+from math import copysign as copysign_f
+
+
+def copysign(x, y) -> int:
+    return int(copysign_f(x, y))
 
 
 class Point2D:
@@ -8,116 +13,136 @@ class Point2D:
         self.x = x
         self.y = y
 
+    @staticmethod
+    def mid_point(p1, p2):
+        return Point2D(abs(p1.x - p2.x) // 2, abs(p1.y - p2.y) // 2)
 
-class Drawable(ABC):
+    @staticmethod
+    def distance(p1, p2):
+        return int((abs(p1.x - p2.x) ** 2 + abs(p1.y - p2.y) ** 2) ** 0.5)
 
-    def __init__(self, color: str, fill: str, width: int):
+    @staticmethod
+    def offset(p1, p2):
+        return p2.x - p1.x, p2.y - p1.y
+
+
+class Figure(ABC):
+
+    def __init__(self, color: str, fill: str, width: int, p1: Point2D, p2: Point2D):
+        self.center = Point2D.mid_point(p1, p2)
         self.color = color
         self.fill = fill
         self.width = width
+        self.p1 = p1
+        self.p2 = p2
+        self.drawn = None
+
+    def __set_center(self, new_center: Point2D):
+        self.center = new_center
+
+    def move(self, new_center: Point2D, canvas: Canvas) -> None:
+        dx, dy = Point2D.offset(self.center, new_center)
+        self.p1.x += dx
+        self.p2.x += dx
+        self.p1.y += dy
+        self.p2.y += dy
+        self.center = new_center
+        if self.drawn is not None:
+            canvas.coords(self.drawn, self.p1.x, self.p1.y, self.p2.x, self.p2.y)
+
+    def get_location(self) -> tuple:
+        return self.center.x, self.center.y, self.p1.x, self.p1.y, self.p2.x, self.p2.y
+
+    def move_points(self, p1: Point2D, p2: Point2D):
+        self.p1 = p1
+        self.p2 = p2
+        self.center = Point2D.mid_point(p1, p2)
+
+    def is_drawn(self) -> bool:
+        return self.drawn is not None
+
+    def update(self, canvas: Canvas):
+        self.drawn = None
+        self.draw(canvas)
 
     @abstractmethod
     def draw(self, canvas: Canvas):
         pass
-
-
-class Movable(ABC):
-
-    @abstractmethod
-    def move(self, coordinates: tuple, canvas: Canvas):
-        pass
-
-    @abstractmethod
-    def get_location(self, canvas: Canvas):
-        pass
-
-
-class Figure(Drawable, Movable):
-
-    def __init__(self, center: Point2D, color: str, fill: str, width: int):
-        Drawable.__init__(self, color, fill, width)
-        self.center = center
-
-    def move(self, coordinates: tuple, canvas: Canvas):
-        self.center = Point2D(coordinates[0], coordinates[1])
-
-    def get_location(self, canvas: Canvas):
-        return self.center
-
-
-class Line(Drawable):
-
-    def __init__(self, point1: Point2D, point2: Point2D, color: str, fill: str, width: int):
-        Drawable.__init__(self, color, fill, width)
-        self.__p1 = point1
-        self.__p2 = point2
-
-
-class Ray(Line):
-
-    def __init__(self, center: Point2D, point: Point2D, color: str, fill: str, width: int):
-        Line.__init__(self, center, point, color, fill, width)
-
-
-class Segment(Ray):
-
-    def __init__(self, point1: Point2D, point2: Point2D, color: str, fill: str, width: int):
-        Ray.__init__(self, point1, point2, color, fill, width)
-
-    def draw(self, canvas: Canvas):
-        canvas.create_line(self.__p1.x, self.__p1.y,
-                           self.__p2.x, self.__p2.y,
-                           fill=self.fill, outline=self.color, width=self.width)
 
 
 class Rectangle(Figure):
 
-    def __init__(self, center: Point2D, color: str, fill: str, width: int,
-                 a: int, b=None):
-        Figure.__init__(self, center, color, fill, width)
-        self.a = a
-        self.b = a if b is None else b
-
     def draw(self, canvas: Canvas):
-        x1 = self.center.x - self.a // 2
-        y1 = self.center.y - self.b // 2
-        x2 = self.center.x + self.a // 2
-        y2 = self.center.y + self.b // 2
-        canvas.create_rectangle(x1, y1, x2, y2, fill=self.fill, outline=self.color, width=self.width)
+        if self.drawn is not None:
+            canvas.coords(self.drawn, self.get_location()[2:])
+        else:
+            self.drawn = canvas.create_rectangle(self.get_location()[2:], fill=self.fill,
+                                                 outline=self.color, width=self.width)
 
 
 class Square(Rectangle):
 
-    def __init__(self, center: Point2D, color: str, fill: str, width: int,
-                 a: int):
-        Rectangle.__init__(self, center, color, fill, width, a)
+    def __init__(self, color: str, fill: str, width: int, p1: Point2D, p2: Point2D):
+        super().__init__(color, fill, width, p1, p2)
+        self.move_points(p1, p2)
+
+    def move_points(self, p1: Point2D, p2: Point2D):
+        dx, dy = Point2D.offset(self.p1, self.p2)
+        if abs(dy) > abs(dx):
+            self.p2.y = self.p1.y + copysign(dx, dy)
+        elif abs(dy) < abs(dx):
+            self.p2.x = self.p1.x + copysign(dy, dx)
+        self.center = Point2D.mid_point(self.p1, self.p2)
 
 
-class Ellipse(Rectangle):
-
-    def __init__(self, center: Point2D, color: str, fill: str, width: int,
-                 a: int, b=None):
-        Rectangle.__init__(self, center, color, fill, width, a, b)
+class Ellipse(Figure):
 
     def draw(self, canvas: Canvas):
-        x1 = self.center.x - self.a // 2
-        y1 = self.center.y - self.b // 2
-        x2 = self.center.x + self.a // 2
-        y2 = self.center.y + self.b // 2
-        canvas.create_oval(x1, y1, x2, y2, fill=self.fill, outline=self.color, width=self.width)
+        if self.drawn is not None:
+            canvas.coords(self.drawn, self.get_location()[2:])
+        else:
+            self.drawn = canvas.create_oval(self.get_location()[2:], fill=self.fill,
+                                            outline=self.color, width=self.width)
 
 
 class Circle(Ellipse):
 
-    def __init__(self, center: Point2D, color: str, fill: str, width: int,
-                 radius: int):
-        Ellipse.__init__(self, center, color, fill, width, radius)
+    def __init__(self, color: str, fill: str, width: int, p1: Point2D, p2: Point2D):
+        super().__init__(color, fill, width, p1, p2)
+        self.move_points(p1, p2)
+
+    def move_points(self, p1: Point2D, p2: Point2D):
+        dx, dy = Point2D.offset(self.p1, self.p2)
+        if abs(dy) > abs(dx):
+            self.p2.y = self.p1.y + copysign(dx, dy)
+        elif abs(dy) < abs(dx):
+            self.p2.x = self.p1.x + copysign(dy, dx)
+        self.center = Point2D.mid_point(self.p1, self.p2)
 
 
 class Rhombus(Figure):
 
-    def __init__(self, center: Point2D, color: str, fill: str, width: int,
-                 diag_length1: int, diag_length2: int):
-        Figure.__init__(self, center, color, fill, width)
-        self.d1 = diag_length1
-        self.d2 = diag_length2
+    def draw(self, canvas: Canvas):
+        if self.drawn is not None:
+            canvas.coords(self.drawn, self.get_location()[2:])
+        else:
+            self.drawn = canvas.create_polygon(self.get_location()[2:], fill=self.fill,
+                                               outline=self.color, width=self.width)
+
+    def get_location(self):
+        dx, dy = Point2D.offset(self.p1, self.p2)
+        return (self.center.x, self.center.y,
+                self.p1.x + dx // 2, self.p1.y,
+                self.p2.x, self.p1.y + dy // 2,
+                self.p1.x + dx // 2, self.p2.y,
+                self.p1.x, self.p1.y + dy // 2)
+
+
+class Segment(Figure):
+
+    def draw(self, canvas: Canvas):
+        if self.drawn is not None:
+            canvas.coords(tuple(self.drawn) + self.get_location()[2:])
+        else:
+            self.drawn = canvas.create_rectangle(self.get_location()[2:], fill=self.fill,
+                                                 outline=self.color, width=self.width)

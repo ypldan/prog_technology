@@ -9,8 +9,9 @@ class MainWindow(object):
     __DEFAULT_COLOR = 'black'
 
     def __init__(self):
+        self.__current = None
         self.__line_width = 1
-        self.__figure = Square(Point2D(100,100), self.__DEFAULT_COLOR, self.__DEFAULT_COLOR, self.__line_width, 70)
+        self.__figure = Square(self.__DEFAULT_COLOR, self.__DEFAULT_COLOR, 2, Point2D(20, 20), Point2D(100, 100))
         self.root = Tk()
         self.__MENU_FONT = tkfont.Font(family="fangsong ti", size=16)
         self.__create_menu()
@@ -39,7 +40,8 @@ class MainWindow(object):
             {'label': 'Ellipse', 'command': self.__set_ellipse},
             # {'label': 'Triangle', 'command': lambda: print('triangle')},
             {'label': 'Rectangle', 'command': self.__set_rectangle},
-            {'label': 'Square', 'command': self.__set_square}
+            {'label': 'Square', 'command': self.__set_square},
+            {'label': 'Rhombus', 'command': self.__set_rhombus}
         ]
         for config in create_menu:
             config['font'] = self.__MENU_FONT
@@ -59,42 +61,58 @@ class MainWindow(object):
 
     def __set_fill_color(self):
         self.__figure.fill = askcolor(color=self.__figure.fill)[1]
+        if self.__figure.is_drawn():
+            self.__figure.update(self.c)
 
     def __set_line_color(self):
         self.__figure.color = askcolor(color=self.__figure.color)[1]
+        if self.__figure.is_drawn():
+            self.__figure.update(self.c)
 
     def __set_figure(self, figure: Figure):
         self.__figure = figure
 
     def __set_circle(self):
-        self.__set_figure(Circle(self.__figure.center,
-                                 self.__figure.color,
+        self.__set_figure(Circle(self.__figure.color,
                                  self.__figure.fill,
-                                 self.__line_width, 50))
+                                 self.__line_width,
+                                 Point2D(20, 20),
+                                 Point2D(100, 100)))
 
     def __set_square(self):
-        self.__set_figure(Square(self.__figure.center,
-                                 self.__figure.color,
+        self.__set_figure(Square(self.__figure.color,
                                  self.__figure.fill,
-                                 self.__line_width, 50))
+                                 self.__line_width,
+                                 Point2D(20, 20),
+                                 Point2D(100, 100)))
 
     def __set_rectangle(self):
-        self.__set_figure(Rectangle(self.__figure.center,
-                                    self.__figure.color,
+        self.__set_figure(Rectangle(self.__figure.color,
                                     self.__figure.fill,
-                                    self.__line_width, 70, 50))
+                                    self.__line_width,
+                                    Point2D(20, 20),
+                                    Point2D(100, 150)))
 
     def __set_ellipse(self):
-        self.__set_figure(Ellipse(self.__figure.center,
-                                    self.__figure.color,
-                                    self.__figure.fill,
-                                    self.__line_width, 70, 50))
+        self.__set_figure(Ellipse(self.__figure.color,
+                                  self.__figure.fill,
+                                  self.__line_width,
+                                  Point2D(20, 20),
+                                  Point2D(100, 150)))
+
+    def __set_rhombus(self):
+        self.__set_figure(Rhombus(self.__figure.color,
+                                  self.__figure.fill,
+                                  self.__line_width,
+                                  Point2D(20, 20),
+                                  Point2D(100, 150)))
 
     def __clear_canvas(self):
         self.c.delete('all')
+        self.__figure.drawn = None
 
     def paint(self, event):
-        self.__figure.center = Point2D(event.x, event.y)
+        self.__figure.move(Point2D(event.x, event.y), self.c)
         self.__figure.draw(self.c)
 
 
