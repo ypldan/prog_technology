@@ -26,6 +26,7 @@ class MainWindow(object):
         self.c = Canvas(self.root, bg='white', width=800, height=500)
         self.c.bind('<Button-1>', self.press_button)
         self.c.bind('<ButtonRelease-1>', self.release_button)
+        self.c.bind('<B1-Motion>', self.move_mouse)
         self.c.pack(fill=BOTH, expand=True)
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
@@ -157,15 +158,17 @@ class MainWindow(object):
             self.__mode = Mode.MOVE
             self.__current = None
 
+    def move_mouse(self, event):
+        if self.__mode == Mode.DRAW:
+            self.__figure.move_points(self.__current, Point2D(event.x, event.y), self.c)
+            if not self.__figure.is_drawn():
+                self.__figure.draw(self.c)
+
     def press_button(self, event):
         if self.__mode == Mode.DRAW:
             self.__current = Point2D(event.x, event.y)
         elif self.__mode == Mode.MOVE:
             self.__figure.move(Point2D(event.x, event.y), self.c)
-
-    # def paint(self, event):
-    #     self.__figure.move(Point2D(event.x, event.y), self.c)
-    #     self.__figure.draw(self.c)
 
 
 if __name__ == '__main__':

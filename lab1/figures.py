@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from tkinter import Canvas
 from math import copysign as copysign_f
-import numpy as np
 
 
 def copysign(x, y) -> int:
@@ -178,7 +177,7 @@ class Ray(Segment):
 
     def move_points(self, p1: Point2D, p2: Point2D, canvas=None):
         dx, dy = Point2D.offset(p1, p2)
-        tan = abs(dy / dx) if dx != 0 else np.inf
+        tan = abs(dy / dx) if dx != 0 else 0
         self.p1 = p1
         self.p2.x = self.p1.x + 10000 if p1.x < p2.x else self.p1.x -10000
         if p1.y < p2.y:
@@ -194,7 +193,7 @@ class Line(Ray):
 
     def move_points(self, p1: Point2D, p2: Point2D, canvas=None):
         dx, dy = Point2D.offset(p1, p2)
-        tan = abs(dy / dx) if dx != 0 else np.inf
+        tan = abs(dy / dx) if dx != 0 else 0
         self.center = Point2D.mid_point(p1, p2)
         if p1.x > p2.x:
             self.p1.x = self.center.x + 10000
