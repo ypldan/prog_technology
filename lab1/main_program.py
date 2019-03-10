@@ -3,6 +3,7 @@ from tkinter.colorchooser import askcolor
 import tkinter.font as tkfont
 from figures import *
 from enum import Enum
+from collections import defaultdict as ddict
 
 
 class Mode(Enum):
@@ -10,10 +11,15 @@ class Mode(Enum):
     MOVE = 2
 
 
+def empty_func():
+    return lambda: None
+
+
 class MainWindow(object):
     __MENU_FONT = None
     __DEFAULT_COLOR = 'black'
     __MOVE_PIXELS = 2
+    __PRESS_KEY = None
 
     def __init__(self):
         self.__current = None
@@ -23,6 +29,12 @@ class MainWindow(object):
         self.root = Tk()
         self.root.title('Paint')
         self.__MENU_FONT = tkfont.Font(family="fangsong ti", size=16)
+        self.__PRESS_KEY = ddict(empty_func, {
+            113: self.__move_left,
+            114: self.__move_right,
+            111: self.__move_up,
+            116: self.__move_down,
+        })
         self.__create_menu()
         self.c = Canvas(self.root, bg='white', width=800, height=500)
         self.c.bind('<Button-1>', self.press_button)
@@ -186,14 +198,7 @@ class MainWindow(object):
 
     def key(self, event):
         if self.__mode == Mode.MOVE:
-            if event.keycode == 113:
-                self.__move_left()
-            elif event.keycode == 114:
-                self.__move_right()
-            elif event.keycode == 111:
-                self.__move_up()
-            elif event.keycode == 116:
-                self.__move_down()
+            self.__PRESS_KEY[event.keycode].__call__()
 
 
 if __name__ == '__main__':
