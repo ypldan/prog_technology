@@ -13,6 +13,7 @@ class Mode(Enum):
 class MainWindow(object):
     __MENU_FONT = None
     __DEFAULT_COLOR = 'black'
+    __MOVE_PIXELS = 2
 
     def __init__(self):
         self.__current = None
@@ -30,6 +31,7 @@ class MainWindow(object):
         self.c.pack(fill=BOTH, expand=True)
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
+        self.root.bind("<Key>", self.key)
         self.root.mainloop()
 
     def __create_menu(self):
@@ -169,6 +171,29 @@ class MainWindow(object):
             self.__current = Point2D(event.x, event.y)
         elif self.__mode == Mode.MOVE:
             self.__figure.move(Point2D(event.x, event.y), self.c)
+
+    def __move_right(self):
+        self.__figure.move(Point2D(self.__figure.center.x + self.__MOVE_PIXELS, self.__figure.center.y), self.c)
+
+    def __move_left(self):
+        self.__figure.move(Point2D(self.__figure.center.x - self.__MOVE_PIXELS, self.__figure.center.y), self.c)
+
+    def __move_up(self):
+        self.__figure.move(Point2D(self.__figure.center.x, self.__figure.center.y - self.__MOVE_PIXELS), self.c)
+
+    def __move_down(self):
+        self.__figure.move(Point2D(self.__figure.center.x, self.__figure.center.y + self.__MOVE_PIXELS), self.c)
+
+    def key(self, event):
+        if self.__mode == Mode.MOVE:
+            if event.keycode == 113:
+                self.__move_left()
+            elif event.keycode == 114:
+                self.__move_right()
+            elif event.keycode == 111:
+                self.__move_up()
+            elif event.keycode == 116:
+                self.__move_down()
 
 
 if __name__ == '__main__':
