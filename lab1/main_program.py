@@ -19,7 +19,6 @@ class MainWindow(object):
     __MENU_FONT = None
     __DEFAULT_COLOR = 'black'
     __MOVE_PIXELS = 2
-    __PRESS_KEY = None
 
     def __init__(self):
         self.__current = None
@@ -29,12 +28,6 @@ class MainWindow(object):
         self.root = Tk()
         self.root.title('Paint')
         self.__MENU_FONT = tkfont.Font(family="fangsong ti", size=16)
-        self.__PRESS_KEY = ddict(empty_func, {
-            113: self.__move_left,
-            114: self.__move_right,
-            111: self.__move_up,
-            116: self.__move_down,
-        })
         self.__create_menu()
         self.c = Canvas(self.root, bg='white', width=800, height=500)
         self.c.bind('<Button-1>', self.press_button)
@@ -43,7 +36,10 @@ class MainWindow(object):
         self.c.pack(fill=BOTH, expand=True)
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
-        self.root.bind("<Key>", self.key)
+        self.root.bind("<Right>", self.move_right)
+        self.root.bind("<Left>", self.move_left)
+        self.root.bind("<Up>", self.move_up)
+        self.root.bind("<Down>", self.move_down)
         self.root.mainloop()
 
     def __create_menu(self):
@@ -165,7 +161,7 @@ class MainWindow(object):
         self.__figure.drawn = None
 
     def release_button(self, event):
-        if self.__mode == Mode.DRAW:
+        if self.__mode == Mode.DRAW and self.__current is not None:
             self.__figure.move_points(self.__current, Point2D(event.x, event.y))
             if not self.__figure.is_drawn():
                 self.__figure.draw(self.c)
@@ -174,7 +170,8 @@ class MainWindow(object):
 
     def move_mouse(self, event):
         if self.__mode == Mode.DRAW:
-            self.__figure.move_points(self.__current, Point2D(event.x, event.y), self.c)
+            if self.__current is not None:
+                self.__figure.move_points(self.__current, Point2D(event.x, event.y), self.c)
             if not self.__figure.is_drawn():
                 self.__figure.draw(self.c)
 
@@ -184,21 +181,20 @@ class MainWindow(object):
         elif self.__mode == Mode.MOVE:
             self.__figure.move(Point2D(event.x, event.y), self.c)
 
-    def __move_right(self):
-        self.__figure.move(Point2D(self.__figure.center.x + self.__MOVE_PIXELS, self.__figure.center.y), self.c)
-
-    def __move_left(self):
-        self.__figure.move(Point2D(self.__figure.center.x - self.__MOVE_PIXELS, self.__figure.center.y), self.c)
-
-    def __move_up(self):
-        self.__figure.move(Point2D(self.__figure.center.x, self.__figure.center.y - self.__MOVE_PIXELS), self.c)
-
-    def __move_down(self):
-        self.__figure.move(Point2D(self.__figure.center.x, self.__figure.center.y + self.__MOVE_PIXELS), self.c)
-
-    def key(self, event):
+    def move_right(self, event):
         if self.__mode == Mode.MOVE:
-            self.__PRESS_KEY[event.keycode].__call__()
+            self.__figure.move(Point2D(self.__figure.center.x + self.__MOVE_PIXELS, self.__figure.center.y), self.c)
+
+    def move_left(self, event):
+            self.__figure.move(Point2D(self.__figure.center.x - self.__MOVE_PIXELS, self.__figure.center.y), self.c)
+
+    def move_up(self, event):
+    	if self.__mode == Mode.MOVE:
+            self.__figure.move(Point2D(self.__figure.center.x, self.__figure.center.y - self.__MOVE_PIXELS), self.c)
+
+    def move_down(self, event):
+    	if self.__mode == Mode.MOVE:
+            self.__figure.move(Point2D(self.__figure.center.x, self.__figure.center.y + self.__MOVE_PIXELS), self.c)
 
 
 if __name__ == '__main__':
