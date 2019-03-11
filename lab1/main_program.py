@@ -1,9 +1,9 @@
+import tkinter.font as tkfont
+from enum import Enum
 from tkinter import *
 from tkinter.colorchooser import askcolor
-import tkinter.font as tkfont
+
 from figures import *
-from enum import Enum
-from collections import defaultdict as ddict
 
 
 class Mode(Enum):
@@ -186,14 +186,14 @@ class MainWindow(object):
             self.__figure.move(Point2D(self.__figure.center.x + self.__MOVE_PIXELS, self.__figure.center.y), self.c)
 
     def move_left(self, event):
-            self.__figure.move(Point2D(self.__figure.center.x - self.__MOVE_PIXELS, self.__figure.center.y), self.c)
+        self.__figure.move(Point2D(self.__figure.center.x - self.__MOVE_PIXELS, self.__figure.center.y), self.c)
 
     def move_up(self, event):
-    	if self.__mode == Mode.MOVE:
+        if self.__mode == Mode.MOVE:
             self.__figure.move(Point2D(self.__figure.center.x, self.__figure.center.y - self.__MOVE_PIXELS), self.c)
 
     def move_down(self, event):
-    	if self.__mode == Mode.MOVE:
+        if self.__mode == Mode.MOVE:
             self.__figure.move(Point2D(self.__figure.center.x, self.__figure.center.y + self.__MOVE_PIXELS), self.c)
 
 
