@@ -1,5 +1,7 @@
 from figures.Point2D import Point2D
-from figures.Figure2Points import Figure
+from figures.Figure import Figure
+from figures.FigurePolyPoints import FigurePolyPoints
+from figures.Figure2Points import Figure2Points
 from figures.Rectangle import Rectangle
 from figures.Square import Square
 from figures.Ellipse import Ellipse
@@ -9,3 +11,4 @@ from figures.Rhombus import Rhombus
 from figures.Segment import Segment
 from figures.Ray import Ray
 from figures.Line import Line
+from figures.Polygon import Polygon

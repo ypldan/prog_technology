@@ -9,7 +9,11 @@ class Circle(Ellipse):
         super().__init__(color, fill, width, p1, p2)
         self.move_points(p1, p2)
 
-    def move_points(self, p1: Point2D, p2: Point2D, canvas=None):
+    def move_points(self, *points, canvas=None):
+        if len(points) != 2:
+            raise Exception('Number of points is not 2')
+        p1 = points[0]
+        p2 = points[1]
         dx, dy = Point2D.offset(p1, p2)
         self.p1 = p1
         self.p2 = p2

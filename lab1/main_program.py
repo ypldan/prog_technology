@@ -12,6 +12,7 @@ class Mode(Enum):
     MOVE = 2
 
 
+
 def empty_func():
     return lambda: None
 
@@ -31,7 +32,8 @@ class MainWindow(object):
         self.__MENU_FONT = tkfont.Font(family="fangsong ti", size=16)
         self.__create_menu()
         self.c = Canvas(self.root, bg='white', width=800, height=500)
-        self.c.bind('<Button-1>', self.press_button)
+        self.c.bind('<Button-1>', self.click_button)
+        self.c.bind('<Double-Button-1>', self.double_click_button)
         self.c.bind('<ButtonRelease-1>', self.release_button)
         self.c.bind('<B1-Motion>', self.move_mouse)
         self.c.pack(fill=BOTH, expand=True)
@@ -63,7 +65,8 @@ class MainWindow(object):
             {'label': 'Triangle', 'command': self.__set_triangle},
             {'label': 'Rectangle', 'command': self.__set_rectangle},
             {'label': 'Square', 'command': self.__set_square},
-            {'label': 'Rhombus', 'command': self.__set_rhombus}
+            {'label': 'Rhombus', 'command': self.__set_rhombus},
+            {'label': 'Polygon', 'command': self.__set_polygon}
         ]
         for config in create_menu:
             config['font'] = self.__MENU_FONT
@@ -157,45 +160,62 @@ class MainWindow(object):
                                Point2D(20, 20),
                                Point2D(100, 150)))
 
+    def __set_polygon(self):
+        self.__set_figure(Polygon(self.__figure.color,
+                                  self.__figure.fill,
+                                  self.__line_width))
+
     def __clear_canvas(self):
         self.c.delete('all')
         self.__figure.drawn = None
 
     def release_button(self, event):
         if self.__mode == Mode.DRAW and self.__current is not None:
-            self.__figure.move_points(self.__current, Point2D(event.x, event.y))
-            if not self.__figure.is_drawn():
-                self.__figure.draw(self.c)
-            self.__mode = Mode.MOVE
-            self.__current = None
+            if isinstance(self.__figure, Figure2Points):
+                self.__figure.move_points(self.__current, Point2D(event.x, event.y))
+                if not self.__figure.is_drawn():
+                    self.__figure.draw(self.c)
+                self.__mode = Mode.MOVE
+                self.__current = None
 
     def move_mouse(self, event):
         if self.__mode == Mode.DRAW:
-            if self.__current is not None:
-                self.__figure.move_points(self.__current, Point2D(event.x, event.y), self.c)
-            if not self.__figure.is_drawn():
-                self.__figure.draw(self.c)
+            if isinstance(self.__figure, Figure2Points):
+                if self.__current is not None:
+                    self.__figure.move_points(self.__current, Point2D(event.x, event.y), canvas=self.c)
+                if not self.__figure.is_drawn():
+                    self.__figure.draw(self.c)
 
-    def press_button(self, event):
+    def click_button(self, event):
         if self.__mode == Mode.DRAW:
-            self.__current = Point2D(event.x, event.y)
+            if isinstance(self.__figure, Figure2Points):
+                self.__current = Point2D(event.x, event.y)
+            elif isinstance(self.__figure, FigurePolyPoints):
+                self.__figure.add_point(Point2D(event.x, event.y))
         elif self.__mode == Mode.MOVE:
-            self.__figure.move(Point2D(event.x, event.y), self.c)
+            self.__figure.move(Point2D(event.x, event.y), canvas=self.c)
+
+    def double_click_button(self, event):
+        if self.__mode == Mode.DRAW:
+            if isinstance(self.__figure, FigurePolyPoints):
+                self.__figure.add_point(Point2D(event.x, event.y), canvas=self.c)
+                self.__figure.draw(self.c)
+                self.__mode = Mode.MOVE
 
     def move_right(self, event):
         if self.__mode == Mode.MOVE:
-            self.__figure.move(Point2D(self.__figure.center.x + self.__MOVE_PIXELS, self.__figure.center.y), self.c)
+            self.__figure.move(Point2D(self.__figure.center.x + self.__MOVE_PIXELS, self.__figure.center.y), canvas=self.c)
 
     def move_left(self, event):
-        self.__figure.move(Point2D(self.__figure.center.x - self.__MOVE_PIXELS, self.__figure.center.y), self.c)
+        self.__figure.move(Point2D(self.__figure.center.x - self.__MOVE_PIXELS, self.__figure.center.y), canvas=self.c)
 
     def move_up(self, event):
         if self.__mode == Mode.MOVE:
-            self.__figure.move(Point2D(self.__figure.center.x, self.__figure.center.y - self.__MOVE_PIXELS), self.c)
+            self.__figure.move(Point2D(self.__figure.center.x, self.__figure.center.y - self.__MOVE_PIXELS), canvas=self.c)
 
     def move_down(self, event):
         if self.__mode == Mode.MOVE:
-            self.__figure.move(Point2D(self.__figure.center.x, self.__figure.center.y + self.__MOVE_PIXELS), self.c)
+            self.__figure.move(Point2D(self.__figure.center.x, self.__figure.center.y + self.__MOVE_PIXELS), canvas=self.c)
 
 
 if __name__ == '__main__':

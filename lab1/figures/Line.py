@@ -4,7 +4,11 @@ from figures.Ray import Ray
 
 class Line(Ray):
 
-    def move_points(self, p1: Point2D, p2: Point2D, canvas=None):
+    def move_points(self, *points, canvas=None):
+        if len(points) != 2:
+            raise Exception('Number of points is not 2')
+        p1 = points[0]
+        p2 = points[1]
         dx, dy = Point2D.offset(p1, p2)
         tan = abs(dy / dx) if dx != 0 else 0
         self.center = Point2D.mid_point(p1, p2)
