@@ -1,5 +1,5 @@
-from Point2D import Point2D
-from Ray import Ray
+from figures.Point2D import Point2D
+from figures.Ray import Ray
 
 
 class Line(Ray):

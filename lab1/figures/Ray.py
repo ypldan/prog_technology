@@ -1,5 +1,5 @@
-from Point2D import Point2D
-from Segment import Segment
+from figures.Point2D import Point2D
+from figures.Segment import Segment
 
 
 class Ray(Segment):

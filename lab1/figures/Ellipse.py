@@ -1,4 +1,4 @@
-from Figure import Figure
+from figures.Figure import Figure
 from tkinter import Canvas
 
 

@@ -1,5 +1,5 @@
-from Point2D import Point2D
-from Triangle import Triangle
+from figures.Point2D import Point2D
+from figures.Triangle import Triangle
 
 
 class Rhombus(Triangle):

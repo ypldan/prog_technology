@@ -1,6 +1,6 @@
-from Point2D import Point2D
-from Rectangle import Rectangle
-from utils import copysign
+from figures.Point2D import Point2D
+from figures.Rectangle import Rectangle
+from figures.utils import copysign
 
 
 class Square(Rectangle):

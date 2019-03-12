@@ -1,4 +1,4 @@
-from Point2D import Point2D
+from figures.Point2D import Point2D
 from abc import ABC, abstractmethod
 from tkinter import Canvas
 

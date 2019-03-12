@@ -1,6 +1,6 @@
 from tkinter import Canvas
-from Figure import Figure
-from Point2D import Point2D
+from figures.Figure import Figure
+from figures.Point2D import Point2D
 
 
 class Triangle(Figure):

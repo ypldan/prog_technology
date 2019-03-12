@@ -1,5 +1,5 @@
 from tkinter import Canvas
-from Figure import Figure
+from figures.Figure import Figure
 
 
 class Segment(Figure):

@@ -1,6 +1,6 @@
-from Ellipse import Ellipse
-from Point2D import Point2D
-from utils import copysign
+from figures.Ellipse import Ellipse
+from figures.Point2D import Point2D
+from figures.utils import copysign
 
 
 class Circle(Ellipse):
