@@ -1,8 +1,8 @@
-from figures.Figure import Figure
+from figures.Figure2Points import Figure2Points
 from tkinter import Canvas
 
 
-class Ellipse(Figure):
+class Ellipse(Figure2Points):
 
     def draw(self, canvas: Canvas):
         if self.drawn is not None:

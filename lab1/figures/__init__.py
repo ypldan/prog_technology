@@ -1,5 +1,5 @@
 from figures.Point2D import Point2D
-from figures.Figure import Figure
+from figures.Figure2Points import Figure
 from figures.Rectangle import Rectangle
 from figures.Square import Square
 from figures.Ellipse import Ellipse

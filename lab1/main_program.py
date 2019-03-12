@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import tkinter.font as tkfont
 from enum import Enum
 from tkinter import *

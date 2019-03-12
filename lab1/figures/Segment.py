@@ -1,8 +1,8 @@
 from tkinter import Canvas
-from figures.Figure import Figure
+from figures.Figure2Points import Figure2Points
 
 
-class Segment(Figure):
+class Segment(Figure2Points):
 
     def draw(self, canvas: Canvas):
         if self.drawn is not None:

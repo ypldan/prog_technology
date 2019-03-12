@@ -1,9 +1,9 @@
 from tkinter import Canvas
-from figures.Figure import Figure
+from figures.Figure2Points import Figure2Points
 from figures.Point2D import Point2D
 
 
-class Triangle(Figure):
+class Triangle(Figure2Points):
 
     def draw(self, canvas: Canvas):
         if self.drawn is not None:

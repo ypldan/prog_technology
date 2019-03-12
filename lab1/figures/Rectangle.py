@@ -1,8 +1,8 @@
-from figures.Figure import Figure
+from figures.Figure2Points import Figure2Points
 from tkinter import Canvas
 
 
-class Rectangle(Figure):
+class Rectangle(Figure2Points):
 
     def draw(self, canvas: Canvas):
         if self.drawn is not None:
