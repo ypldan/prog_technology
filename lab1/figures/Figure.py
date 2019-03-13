@@ -5,9 +5,11 @@ from figures.Point2D import Point2D
 
 class Figure(ABC):
 
-    @abstractmethod
-    def __init__(self, color: str, fill: str, width: int, *points):
-        pass
+    def __init__(self, color: str, fill: str, width: int):
+        self.color = color
+        self.fill = fill
+        self.width = width
+        self.drawn = None
 
     @abstractmethod
     def move(self, new_center: Point2D, canvas=None):

@@ -12,3 +12,4 @@ from figures.Segment import Segment
 from figures.Ray import Ray
 from figures.Line import Line
 from figures.Polygon import Polygon
+from figures.MultiLine import MultiLine

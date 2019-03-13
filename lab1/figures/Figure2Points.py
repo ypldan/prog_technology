@@ -1,4 +1,5 @@
-from abc import ABC
+from abc import ABC, abstractmethod
+from tkinter import Canvas
 
 from figures.Figure import Figure
 from figures.Point2D import Point2D
@@ -11,10 +12,6 @@ class Figure2Points(Figure, ABC):
         self.p1 = p1
         self.p2 = p2
         self.center = Point2D.mid_point(p1, p2)
-        self.color = color
-        self.fill = fill
-        self.width = width
-        self.drawn = None
 
     def move(self, new_center: Point2D, canvas=None):
         dx, dy = Point2D.offset(self.center, new_center)
@@ -39,3 +36,7 @@ class Figure2Points(Figure, ABC):
         self.center = Point2D.mid_point(p1, p2)
         if canvas is not None and self.drawn is not None:
             canvas.coords(self.drawn, self.get_location()[2:])
+
+    @abstractmethod
+    def draw(self, canvas: Canvas):
+        pass

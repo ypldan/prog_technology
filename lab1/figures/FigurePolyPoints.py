@@ -1,20 +1,18 @@
+from tkinter import Canvas
+
 from figures.Figure import Figure
 from figures.Point2D import Point2D
-from abc import ABC
+from abc import ABC, abstractmethod
 
 
 class FigurePolyPoints(Figure, ABC):
 
     def __init__(self, color: str, fill: str, width: int, *points):
-        super().__init__(color, fill, width, *points)
+        Figure.__init__(self, color, fill, width)
         self.points = list(points)
         self.center = Point2D(0, 0)
         if len(points) != 0:
             self.center = points[0]
-        self.color = color
-        self.fill = fill
-        self.width = width
-        self.drawn = None
 
     def move(self, new_center: Point2D, canvas=None):
         dx, dy = Point2D.offset(self.center, new_center)
@@ -46,3 +44,7 @@ class FigurePolyPoints(Figure, ABC):
             self.center = point
         if self.is_drawn() and canvas is not None:
             self.update(canvas)
+
+    @abstractmethod
+    def draw(self, canvas: Canvas):
+        pass

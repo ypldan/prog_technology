@@ -12,11 +12,6 @@ class Mode(Enum):
     MOVE = 2
 
 
-
-def empty_func():
-    return lambda: None
-
-
 class MainWindow(object):
     __MENU_FONT = None
     __DEFAULT_COLOR = 'black'
@@ -66,7 +61,8 @@ class MainWindow(object):
             {'label': 'Rectangle', 'command': self.__set_rectangle},
             {'label': 'Square', 'command': self.__set_square},
             {'label': 'Rhombus', 'command': self.__set_rhombus},
-            {'label': 'Polygon', 'command': self.__set_polygon}
+            {'label': 'Polygon', 'command': self.__set_polygon},
+            {'label': 'MultiLine', 'command': self.__set_multiline}
         ]
         for config in create_menu:
             config['font'] = self.__MENU_FONT
@@ -165,6 +161,11 @@ class MainWindow(object):
                                   self.__figure.fill,
                                   self.__line_width))
 
+    def __set_multiline(self):
+        self.__set_figure(MultiLine(self.__figure.color,
+                                    self.__figure.fill,
+                                    self.__figure.width))
+
     def __clear_canvas(self):
         self.c.delete('all')
         self.__figure.drawn = None
@@ -204,18 +205,21 @@ class MainWindow(object):
 
     def move_right(self, event):
         if self.__mode == Mode.MOVE:
-            self.__figure.move(Point2D(self.__figure.center.x + self.__MOVE_PIXELS, self.__figure.center.y), canvas=self.c)
+            self.__figure.move(Point2D(self.__figure.center.x + self.__MOVE_PIXELS, self.__figure.center.y),
+                               canvas=self.c)
 
     def move_left(self, event):
         self.__figure.move(Point2D(self.__figure.center.x - self.__MOVE_PIXELS, self.__figure.center.y), canvas=self.c)
 
     def move_up(self, event):
         if self.__mode == Mode.MOVE:
-            self.__figure.move(Point2D(self.__figure.center.x, self.__figure.center.y - self.__MOVE_PIXELS), canvas=self.c)
+            self.__figure.move(Point2D(self.__figure.center.x, self.__figure.center.y - self.__MOVE_PIXELS),
+                               canvas=self.c)
 
     def move_down(self, event):
         if self.__mode == Mode.MOVE:
-            self.__figure.move(Point2D(self.__figure.center.x, self.__figure.center.y + self.__MOVE_PIXELS), canvas=self.c)
+            self.__figure.move(Point2D(self.__figure.center.x, self.__figure.center.y + self.__MOVE_PIXELS),
+                               canvas=self.c)
 
 
 if __name__ == '__main__':
